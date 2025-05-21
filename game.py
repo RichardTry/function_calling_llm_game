@@ -6,39 +6,14 @@ import random
 from consts import *
 from player import Player
 from generate import generate_map
+# from model import get_function
+from content import Content
+from world import World
 
-from model import generation_pipeline
-
-# Определяем классы для типов тайлов
-class Tile:
-    def __init__(self, tile_type, image):
-        self.tile_type = tile_type
-        self.image = image
-
-    def draw(self, surface, x, y):
-        surface.blit(self.image, (x * TILE_SIZE, y * TILE_SIZE))
-
-# Функция для загрузки изображений
-def load_images():
-    res = {}
-    for tile in ('grass', 'water', 'dirt', 'castle'):
-        image = pygame.transform.scale(pygame.image.load(f'textures/{tile}.png').convert(), (TILE_SIZE,) * 2)
-        res[tile] = Tile(tile, image)
-    return res
-
-def draw_input_box(screen, input_active, input_box, input_text, input_color, input_font):
-    # Отрисовка текстового поля
-    pygame.draw.rect(screen, input_color, input_box, 2)
-    text_surface = input_font.render(input_text, True, (255, 255, 255))
-    screen.blit(text_surface, (input_box.x + 5, input_box.y + 5))
-    if input_active:
-        # Отрисовка курсора
-        pygame.draw.rect(screen, input_color, (input_box.x + text_surface.get_width() + 10, input_box.y + 5, 2, 30))
 
 def main():
     # Инициализация Pygame
     pygame.init()
-
     manager = pygame_gui.UIManager((800, 600))
 
     input_box = pygame_gui.elements.UITextEntryLine(
@@ -46,15 +21,15 @@ def main():
         manager=manager
     )
 
-    print(generate_map(3, 3))
+    # print(generate_map(3, 3))
 
     # Создание окна
     screen = pygame.display.set_mode((WIDTH, HEIGHT))#, pygame.FULLSCREEN)
     pygame.display.set_caption("Клеточное поле")
     clock = pygame.time.Clock()
 
-    # Загрузка изображений тайлов
-    tiles = load_images()
+    content = Content('tiles')
+    world = World(content.tiles, 5, 4)
     player = Player(0, 0, "textures/player.png")
 
     # Создаем сетку тайлов (пример 10x15)
@@ -81,7 +56,7 @@ def main():
                 pygame.quit()
                 sys.exit()
             elif event.type == pygame_gui.UI_TEXT_ENTRY_FINISHED and event.ui_element == input_box:
-                print("Ввод:", event.text)
+                print("CALL FUNCTION:", get_function(event.text))
                 input_box.set_text("")
             manager.process_events(event)
 
@@ -92,18 +67,7 @@ def main():
         manager.update(time_delta)
         screen.fill(BACKGROUND_COLOR)
 
-        # Отрисовка тайлов
-        for y in range(len(grid)):
-            for x in range(len(grid[y])):
-                tile_type = grid[y][x]
-                tile = tiles[tile_type]
-                tile.draw(screen, x, y)
-        
-        # for y in range(GRID_HEIGHT):
-        #     for x in range(GRID_WIDTH):
-        #         rect = pygame.Rect(x * TILE_SIZE, y * TILE_SIZE, TILE_SIZE, TILE_SIZE)
-        #         pygame.draw.rect(screen, (255, 255, 255), rect, 1)  # Рисуем клетки (белые линии)
-
+        world.draw(screen)
         # Отрисовка игрока
         player.draw(screen)
 
