@@ -3,7 +3,7 @@ import pygame
 from consts import TILE_SIZE, GRID_HEIGHT, GRID_WIDTH
 
 
-class Player:
+class Character:
     def __init__(self, x, y, image):
         self.x = x
         self.y = y
@@ -13,6 +13,16 @@ class Player:
         self.move_delay = 1 / self.speed
         self.move_delay = 0
         self.last_move_time = 0
+
+        self.inventory = {}
+        self.relations = {}
+
+    def add_to_inventory(self, item):
+        for i in range(self.inventory_size):
+            if self.inventory[i] is None:
+                self.inventory[i] = item
+                return True
+        return False
 
     def move(self, keys):
         current_time = pygame.time.get_ticks()
