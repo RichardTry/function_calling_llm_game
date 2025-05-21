@@ -4,8 +4,8 @@ import sys
 import random
 
 from consts import *
-from player import Player
-# from model import get_function
+from character import Character
+from model import get_function
 from content import Content
 from world import World
 
@@ -27,7 +27,7 @@ def main():
 
     content = Content('tiles')
     world = World(content.tiles, 5, 4)
-    player = Player(0, 0, "textures/player.png")
+    player = Character(0, 0, "textures/player.png")
 
     # Создаем сетку тайлов (пример 10x15)
     choices = ['grass', 'grass', 'water', 'castle']
