@@ -37,4 +37,7 @@ def get_function(prompt: str):
         eos_token_id=terminator_ids,
     )[0]["generated_text"]
 
-    return json.loads(response)
+    try:
+        return json.loads(response)
+    except json.JSONDecodeError:
+        return None
