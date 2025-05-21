@@ -36,5 +36,4 @@ def get_function(prompt: str):
         eos_token_id=terminator_ids,
     )
 
-    print(outputs)
     return outputs[0]["generated_text"]
