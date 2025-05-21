@@ -5,7 +5,6 @@ import random
 
 from consts import *
 from player import Player
-from generate import generate_map
 # from model import get_function
 from content import Content
 from world import World
@@ -20,8 +19,6 @@ def main():
         relative_rect=pygame.Rect((50, 500), (700, 40)),
         manager=manager
     )
-
-    # print(generate_map(3, 3))
 
     # Создание окна
     screen = pygame.display.set_mode((WIDTH, HEIGHT))#, pygame.FULLSCREEN)
