@@ -1,14 +1,13 @@
 import pygame
+import pygame_gui
 import sys
 import random
 
-# Константы
-WIDTH, HEIGHT = 1920, 1080
-TILE_SIZE = 40
-GRID_WIDTH = WIDTH // TILE_SIZE
-GRID_HEIGHT = HEIGHT // TILE_SIZE
-PLAYER_COLOR = (0, 255, 0)  # Зеленый цвет для игрока
-BACKGROUND_COLOR = (0, 0, 0)  # Черный цвет фона
+from consts import *
+from player import Player
+from generate import generate_map
+
+from model import generation_pipeline
 
 # Определяем классы для типов тайлов
 class Tile:
@@ -27,9 +26,27 @@ def load_images():
         res[tile] = Tile(tile, image)
     return res
 
+def draw_input_box(screen, input_active, input_box, input_text, input_color, input_font):
+    # Отрисовка текстового поля
+    pygame.draw.rect(screen, input_color, input_box, 2)
+    text_surface = input_font.render(input_text, True, (255, 255, 255))
+    screen.blit(text_surface, (input_box.x + 5, input_box.y + 5))
+    if input_active:
+        # Отрисовка курсора
+        pygame.draw.rect(screen, input_color, (input_box.x + text_surface.get_width() + 10, input_box.y + 5, 2, 30))
+
 def main():
     # Инициализация Pygame
     pygame.init()
+
+    manager = pygame_gui.UIManager((800, 600))
+
+    input_box = pygame_gui.elements.UITextEntryLine(
+        relative_rect=pygame.Rect((50, 500), (700, 40)),
+        manager=manager
+    )
+
+    print(generate_map(3, 3))
 
     # Создание окна
     screen = pygame.display.set_mode((WIDTH, HEIGHT))#, pygame.FULLSCREEN)
@@ -38,7 +55,7 @@ def main():
 
     # Загрузка изображений тайлов
     tiles = load_images()
-    player = pygame.transform.scale(pygame.image.load('textures/player.png').convert_alpha(), (TILE_SIZE,) * 2)
+    player = Player(0, 0, "textures/player.png")
 
     # Создаем сетку тайлов (пример 10x15)
     choices = ['grass', 'grass', 'water', 'castle']
@@ -56,27 +73,23 @@ def main():
     #     ['dirt', 's', 'grass', 'grass', 'grass']* 2,
     # ]
 
-    # Начальная позиция игрока
-    player_x, player_y = 0, 0
-
+    time_delta = 0.0
     # Основной игровой цикл
     while True:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 pygame.quit()
                 sys.exit()
+            elif event.type == pygame_gui.UI_TEXT_ENTRY_FINISHED and event.ui_element == input_box:
+                print("Ввод:", event.text)
+                input_box.set_text("")
+            manager.process_events(event)
+
 
         keys = pygame.key.get_pressed()
-        if keys[pygame.K_UP] and player_y > 0:
-            player_y -= 1
-        if keys[pygame.K_DOWN] and player_y < GRID_HEIGHT - 1:
-            player_y += 1
-        if keys[pygame.K_LEFT] and player_x > 0:
-            player_x -= 1
-        if keys[pygame.K_RIGHT] and player_x < GRID_WIDTH - 1:
-            player_x += 1
+        player.move(keys)
 
-        # Отрисовка поля
+        manager.update(time_delta)
         screen.fill(BACKGROUND_COLOR)
 
         # Отрисовка тайлов
@@ -92,12 +105,12 @@ def main():
         #         pygame.draw.rect(screen, (255, 255, 255), rect, 1)  # Рисуем клетки (белые линии)
 
         # Отрисовка игрока
-        player_rect = pygame.Rect(player_x * TILE_SIZE, player_y * TILE_SIZE, TILE_SIZE, TILE_SIZE)
-        screen.blit(player, (player_x * TILE_SIZE, player_y * TILE_SIZE))
-        # pygame.draw.rect(screen, PLAYER_COLOR, player_rect)  # Рисуем игрока
+        player.draw(screen)
+
+        manager.draw_ui(screen)
 
         pygame.display.flip()  # Обновление экрана
-        clock.tick(60)
+        time_delta = clock.tick(60) / 1000.0
 
 if __name__ == "__main__":
     main()
