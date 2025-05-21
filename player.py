@@ -12,7 +12,6 @@ class Player:
         self.speed = 10000
         self.move_delay = 1 / self.speed
         self.move_delay = 0
-        print(self.move_delay)
         self.last_move_time = 0
 
     def move(self, keys):
