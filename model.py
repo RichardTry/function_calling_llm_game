@@ -4,6 +4,7 @@ from jinja2 import Template
 import torch
 from transformers import AutoModelForCausalLM, AutoTokenizer, pipeline, MistralForCausalLM, Pipeline
 from functions import FUNCTIONS
+from transformers.utils import get_json_schema
 
 # RENDER_JSON_TEMPLATE = "\n{%- macro render_json(d, indent=4) -%}\n{%- if d is string %}\n{{ '\"' + d + '\"' }}\n{%- elif d is mapping %}\n{%- for key, value in d.items() %}\n{%- if value is string %}\n{{ \" \" * indent + '\"' + key + '\": \"' + value + '\"' }}\n{%- elif value is mapping %}\n{{ \" \" * indent + '\"' + key + '\": {' }}\n{{ render_json(value, indent + 4) }}\n{{ \" \" * indent + \"}\" }}\n{%- elif value is sequence %}\n{{ \" \" * indent + '\"' + key + '\": [\n' }}\n{%- for item in value %}\n{{- \" \" * (indent + 4) + render_json(item, indent + 4) }}\n{%- if not loop.last %},\n{% endif %}\n{%- endfor %}\n{{ '\n' + \" \" * indent + \"]\" }}\n{%- else %}\n{{ \" \" * indent + '\"' + key + '\": ' + value|string }}\n{%- endif %}\n{%- if not loop.last %},\n{% endif %}\n{%- endfor %}\n{%- elif d is sequence %}\n{%- for item in d %}\n{{ \" \" * indent + render_json(item, indent + 4) }}\n{%- if not loop.last %},\n{% endif %}\n{%- endfor %}\n{%- else %}\n{{ \" \" * indent + d|string }}\n{%- endif %}\n{%- endmacro %}\n\n\n"
 
@@ -78,7 +79,7 @@ def get_function(pipeline: Pipeline, prompt: str, need_manual_tools: bool = Fals
     history_messages = [
         {"role": "system", "content": ("Ты - полезный помощник, помогающий выбрать необходимую функцию для вызова. Всегда отвечай только валидным JSON, "
                  "не добавляй пояснений, текста или комментариев — только чистый JSON. Формат JSON для указания функции и аргументов: {\"name\": function_name, \"arguments\": {\"some_argument\": \"some_value\"}}. Вот доступные тебе функции, используй их при необходимости - "
-                 f"{Template(TOOLS_TEMPLATE).render(tools=FUNCTIONS) if need_manual_tools else ""}")},
+                 f"{Template(TOOLS_TEMPLATE).render(tools=get_json_schema(FUNCTIONS)) if need_manual_tools else ""}")},
         {"role": "user", "content": prompt},
     ]
     inputs = pipeline.tokenizer.apply_chat_template(
