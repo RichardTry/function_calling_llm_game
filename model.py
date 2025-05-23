@@ -33,13 +33,21 @@ TOOLS_TEMPLATE = """
 """
 
 def extract_last_valid_json(text):
-    candidates = re.findall(r'\{.*?\}', text, re.DOTALL)
-    for candidate in reversed(candidates):
-        try:
-            return json.loads(candidate)
-        except json.JSONDecodeError:
-            continue
-    return None
+    stack = []
+    last_valid = None
+
+    for i, char in enumerate(text):
+        if char == '{':
+            stack.append(i)
+        elif char == '}' and stack:
+            start = stack.pop()
+            substring = text[start:i+1]
+            try:
+                last_valid = json.loads(substring)
+            except json.JSONDecodeError:
+                continue
+
+    return last_valid
 
 
 def get_pipeline(model_name: str) -> Pipeline:
