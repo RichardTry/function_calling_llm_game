@@ -3,9 +3,34 @@ import torch
 from transformers import AutoModelForCausalLM, AutoTokenizer, pipeline, MistralForCausalLM, Pipeline
 from functions import FUNCTIONS
 
+TOOLS_TEMPLATE = """
+{%- if tools is not none %}
+    {%- for tool in tools %}
+        {%- set tool = tool.function %}
+        {{- '{
+' }}
+        {{- render_json(tool, 4) }}
+        {%- if not loop.last %}
+            {{- "
+},
+" }}
+        {%- else %}
+            {{- "
+}
+" }}
+        {% endif %}
+    {%- endfor %}
+    {%- elif system_message != "" %}
+        {{- '
+
+' }}
+{%- endif %}
+"""
 
 def get_pipeline(model_name: str) -> Pipeline:
     tokenizer = AutoTokenizer.from_pretrained(model_name)
+    if 'tools' not in tokenizer.chat_template:
+        tokenizer.chat_template += TOOLS_TEMPLATE
     model = AutoModelForCausalLM.from_pretrained(
         model_name,
         # low_cpu_mem_usage=True,

@@ -5,8 +5,12 @@ from model import get_pipeline, get_function
 
 # Example models to evaluate
 # "mistralai/Mistral-Small-3.1-24B-Instruct-2503"
-# "DiTy/gemma-2-9b-it-russian-function-calling-GGUF"
-MODELS = ["openchat/openchat-3.5-0106", "DiTy/gemma-2-9b-it-russian-function-calling-GGUF"]
+
+MODELS = [
+    "openchat/openchat-3.5-0106",
+    "DiTy/gemma-2-9b-it-russian-function-calling-GGUF",
+    "Vikhrmodels/Vikhr-Nemo-12B-Instruct-R-21-09-24"
+]
 
 with open("eval_dataset.json", "r", encoding="utf-8") as f:
     test_data = json.load(f)
@@ -14,6 +18,7 @@ with open("eval_dataset.json", "r", encoding="utf-8") as f:
 results = []
 
 for model_name in MODELS:
+    print(f"Evaluating model: {model_name}")
     for item in test_data:
         prompt = item["input"]
         should_call = "expected_function" in item
