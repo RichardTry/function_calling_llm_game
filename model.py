@@ -62,22 +62,22 @@ def get_pipeline(model_name: str) -> Pipeline:
         device_map="auto"
     )
 
-def get_function(pipeline: Pipeline, prompt: str) -> dict:
+def get_function(pipeline: Pipeline, prompt: str, need_manual_tools: bool = False) -> dict:
     terminator_ids = [
         pipeline.tokenizer.eos_token_id,
         pipeline.tokenizer.convert_tokens_to_ids("<end_of_turn>")
     ]
     history_messages = [
-        {"role": "system", "content": ("Ты - полезный помощник, имеющий доступ к следующим функциям. Всегда отвечай только валидным JSON, "
-                 "не добавляй пояснений, текста или комментариев — только чистый JSON. Вот доступные тебе функции, используй их при необходимости - "
-                 f"{Template(TOOLS_TEMPLATE).render(tools=FUNCTIONS)}")},
+        {"role": "system", "content": ("Ты - полезный помощник, помогающий выбрать необходимую функцию для вызова. Всегда отвечай только валидным JSON, "
+                 "не добавляй пояснений, текста или комментариев — только чистый JSON. Формат JSON для указания функции и аргументов: {\"name\": function_name, \"arguments\": {\"some_argument\": \"some_value\"}}. Вот доступные тебе функции, используй их при необходимости - "
+                 f"{Template(TOOLS_TEMPLATE).render(tools=FUNCTIONS) if need_manual_tools else ""}")},
         {"role": "user", "content": prompt},
     ]
     inputs = pipeline.tokenizer.apply_chat_template(
         history_messages,
         tokenize=False,
         add_generation_prompt=True,
-        # tools=FUNCTIONS,
+        tools=None if need_manual_tools else FUNCTIONS,
     )
 
     response = pipeline(

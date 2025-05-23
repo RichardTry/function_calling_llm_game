@@ -26,7 +26,7 @@ for model_name in tqdm(MODELS):
         expected_function = item.get("expected_function")
         expected_args = item.get("expected_arguments")
 
-        response = get_function(generation_pipeline, prompt)
+        response = get_function(generation_pipeline, prompt, False if model_name == "DiTy/gemma-2-9b-it-russian-function-calling-GGUF" else True)
         is_valid_json = isinstance(response, dict) and "name" in response and "arguments" in response
 
         model_called = is_valid_json
