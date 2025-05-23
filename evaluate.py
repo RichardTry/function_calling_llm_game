@@ -1,7 +1,7 @@
+import gc
 import json
 import tqdm
-from torch import bfloat16
-from transformers import pipeline
+import torch
 from model import get_pipeline, get_function
 
 # Example models to evaluate
@@ -48,6 +48,10 @@ for model_name in tqdm(MODELS):
             "exact_match": exact_match
         })
     del generation_pipeline
+    gc.collect()
+
+    if torch.cuda.is_available():
+        torch.cuda.empty_cache()
 
     with open(f"{model_name.replace('/', '_')}_result.json", "w", encoding="utf-8") as out:
         json.dump(results, out, ensure_ascii=False, indent=2)
