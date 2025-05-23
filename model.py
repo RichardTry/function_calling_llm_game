@@ -1,4 +1,5 @@
 import json
+import re
 from jinja2 import Template
 import torch
 from transformers import AutoModelForCausalLM, AutoTokenizer, pipeline, MistralForCausalLM, Pipeline
@@ -30,6 +31,16 @@ TOOLS_TEMPLATE = """
 ' }}
 {%- endif %}
 """
+
+def extract_last_valid_json(text):
+    candidates = re.findall(r'\{.*?\}', text, re.DOTALL)
+    for candidate in reversed(candidates):
+        try:
+            return json.loads(candidate)
+        except json.JSONDecodeError:
+            continue
+    return None
+
 
 def get_pipeline(model_name: str) -> Pipeline:
     tokenizer = AutoTokenizer.from_pretrained(model_name)
@@ -75,7 +86,4 @@ def get_function(pipeline: Pipeline, prompt: str) -> dict:
         eos_token_id=terminator_ids,
     )[0]["generated_text"]
 
-    try:
-        return json.loads(response)
-    except json.JSONDecodeError:
-        return None
+    return extract_last_valid_json(response)
