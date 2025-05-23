@@ -3,6 +3,8 @@ import torch
 from transformers import AutoModelForCausalLM, AutoTokenizer, pipeline, MistralForCausalLM, Pipeline
 from functions import FUNCTIONS
 
+RENDER_JSON_TEMPLATE = "\n{%- macro render_json(d, indent=4) -%}\n{%- if d is string %}\n{{ '\"' + d + '\"' }}\n{%- elif d is mapping %}\n{%- for key, value in d.items() %}\n{%- if value is string %}\n{{ \" \" * indent + '\"' + key + '\": \"' + value + '\"' }}\n{%- elif value is mapping %}\n{{ \" \" * indent + '\"' + key + '\": {' }}\n{{ render_json(value, indent + 4) }}\n{{ \" \" * indent + \"}\" }}\n{%- elif value is sequence %}\n{{ \" \" * indent + '\"' + key + '\": [\n' }}\n{%- for item in value %}\n{{- \" \" * (indent + 4) + render_json(item, indent + 4) }}\n{%- if not loop.last %},\n{% endif %}\n{%- endfor %}\n{{ '\n' + \" \" * indent + \"]\" }}\n{%- else %}\n{{ \" \" * indent + '\"' + key + '\": ' + value|string }}\n{%- endif %}\n{%- if not loop.last %},\n{% endif %}\n{%- endfor %}\n{%- elif d is sequence %}\n{%- for item in d %}\n{{ \" \" * indent + render_json(item, indent + 4) }}\n{%- if not loop.last %},\n{% endif %}\n{%- endfor %}\n{%- else %}\n{{ \" \" * indent + d|string }}\n{%- endif %}\n{%- endmacro %}\n\n\n"
+
 TOOLS_TEMPLATE = """
 {%- if tools is not none %}
     {%- for tool in tools %}
@@ -30,7 +32,7 @@ TOOLS_TEMPLATE = """
 def get_pipeline(model_name: str) -> Pipeline:
     tokenizer = AutoTokenizer.from_pretrained(model_name)
     if 'tools' not in tokenizer.chat_template:
-        tokenizer.chat_template += TOOLS_TEMPLATE
+        tokenizer.chat_template = RENDER_JSON_TEMPLATE + tokenizer.chat_template + TOOLS_TEMPLATE
     model = AutoModelForCausalLM.from_pretrained(
         model_name,
         # low_cpu_mem_usage=True,
