@@ -1,7 +1,6 @@
 [
   {
     "input": "Иди в деревню",
-    "should_call": true,
     "expected_function": "go_to",
     "expected_arguments": {
       "location": "деревня"
@@ -9,25 +8,21 @@
   },
   {
     "input": "Отправляйся в замок",
-    "should_call": true,
     "expected_function": "go_to",
     "expected_arguments": {
       "location": "замок"
     }
   },
   {
-    "input": "Ничего не делай",
-    "should_call": false
+    "input": "Ничего не делай"
   },
   {
     "input": "Стой здесь",
-    "should_call": true,
     "expected_function": "stop",
     "expected_arguments": {}
   },
   {
     "input": "Двигайся на север",
-    "should_call": true,
     "expected_function": "move",
     "expected_arguments": {
       "side": "north"
@@ -35,7 +30,6 @@
   },
   {
     "input": "Поверни на восток и иди",
-    "should_call": true,
     "expected_function": "move",
     "expected_arguments": {
       "side": "east"
@@ -43,7 +37,6 @@
   },
   {
     "input": "Давай на юг",
-    "should_call": true,
     "expected_function": "move",
     "expected_arguments": {
       "side": "south"
@@ -51,7 +44,6 @@
   },
   {
     "input": "Пойдем на запад",
-    "should_call": true,
     "expected_function": "move",
     "expected_arguments": {
       "side": "west"
@@ -59,29 +51,24 @@
   },
   {
     "input": "Не двигайся",
-    "should_call": true,
     "expected_function": "stop",
     "expected_arguments": {}
   },
   {
     "input": "Остановись",
-    "should_call": true,
     "expected_function": "stop",
     "expected_arguments": {}
   },
   {
     "input": "Хватит идти",
-    "should_call": true,
     "expected_function": "stop",
     "expected_arguments": {}
   },
   {
-    "input": "Может передохнем",
-    "should_call": false
+    "input": "Может передохнем"
   },
   {
     "input": "Зайди в дом",
-    "should_call": true,
     "expected_function": "go_inside",
     "expected_arguments": {
       "location": "дом"
@@ -89,29 +76,24 @@
   },
   {
     "input": "Внутрь",
-    "should_call": true,
     "expected_function": "go_inside",
     "expected_arguments": {}
   },
   {
     "input": "Зайди внутрь",
-    "should_call": true,
     "expected_function": "go_inside",
     "expected_arguments": {}
   },
   {
     "input": "Зайди",
-    "should_call": true,
     "expected_function": "go_inside",
     "expected_arguments": {}
   },
   {
-    "input": "Сидим у входа",
-    "should_call": false
+    "input": "Сидим у входа"
   },
   {
     "input": "Возьми квест у ведьмы",
-    "should_call": true,
     "expected_function": "take_quest",
     "expected_arguments": {
       "npc": "ведьма"
@@ -119,17 +101,14 @@
   },
   {
     "input": "Пора взять квест",
-    "should_call": true,
     "expected_function": "take_quest",
     "expected_arguments": {}
   },
   {
-    "input": "Сейчас не до заданий",
-    "should_call": false
+    "input": "Сейчас не до заданий"
   },
   {
     "input": "Сразись с разбойником",
-    "should_call": true,
     "expected_function": "fight",
     "expected_arguments": {
       "npc": "разбойник"
@@ -137,17 +116,14 @@
   },
   {
     "input": "Начни бой",
-    "should_call": true,
     "expected_function": "fight",
     "expected_arguments": {}
   },
   {
-    "input": "Тут мирно, не надо драться",
-    "should_call": false
+    "input": "Тут мирно, не надо драться"
   },
   {
     "input": "Отдай зелье магу",
-    "should_call": true,
     "expected_function": "give",
     "expected_arguments": {
       "item": "зелье",
@@ -156,7 +132,6 @@
   },
   {
     "input": "Дай 3 яблока стражнику",
-    "should_call": true,
     "expected_function": "give",
     "expected_arguments": {
       "item": "яблока",
@@ -165,12 +140,10 @@
     }
   },
   {
-    "input": "Подари что-нибудь",
-    "should_call": false
+    "input": "Подари что-нибудь"
   },
   {
     "input": "Выброси топор",
-    "should_call": true,
     "expected_function": "drop",
     "expected_arguments": {
       "item": "топор"
@@ -178,7 +151,6 @@
   },
   {
     "input": "Брось 2 камня",
-    "should_call": true,
     "expected_function": "drop",
     "expected_arguments": {
       "item": "камня",
@@ -186,7 +158,6 @@
     }
   },
   {
-    "input": "Не теряй вещи",
-    "should_call": false
+    "input": "Не теряй вещи"
   }
 ]
