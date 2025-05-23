@@ -1,6 +1,6 @@
 import gc
 import json
-import tqdm
+from tqdm import tqdm
 import torch
 from model import get_pipeline, get_function
 
