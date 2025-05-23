@@ -19,13 +19,14 @@ results = []
 
 for model_name in MODELS:
     print(f"Evaluating model: {model_name}")
+    generation_pipeline = get_pipeline(model_name)
     for item in test_data:
         prompt = item["input"]
         should_call = "expected_function" in item
         expected_function = item.get("expected_function")
         expected_args = item.get("expected_arguments")
 
-        response = get_function(get_pipeline(model_name), prompt)
+        response = get_function(generation_pipeline, prompt)
         is_valid_json = isinstance(response, dict) and "name" in response and "arguments" in response
 
         model_called = is_valid_json
