@@ -5,7 +5,7 @@ import random
 
 from consts import *
 from character import Character
-from model import get_function
+from model import get_pipeline, get_function
 from content import Content
 from world import World
 
@@ -29,6 +29,9 @@ def main():
     world = World(content.tiles, 5, 4)
     player = Character(0, 0, "textures/player.png")
 
+    # Создание pipeline один раз при запуске
+    generation_pipeline = get_pipeline("DiTy/gemma-2-9b-it-russian-function-calling-GGUF")
+
     # Создаем сетку тайлов (пример 10x15)
     choices = ['grass', 'grass', 'water', 'castle']
     probabilities = [0.5, 0.3, 0.1, 0.01]
@@ -37,13 +40,6 @@ def main():
         grid.append([])
         for x in range(WIDTH // TILE_SIZE):
             grid[y].append(random.choices(choices, weights=probabilities, k=1)[0])
-    # grid = [
-    #     ['grass', 'grass', 'water', 'water', 'grass'] * 2,
-    #     ['grass', 'dirt', 'dirt', 'water', 'grass'] * 2,
-    #     ['grass', 'grass', 'grass', 'grass', 'grass']* 2,
-    #     ['water', 'water', 'water', 'water', 'water']* 2,
-    #     ['dirt', 's', 'grass', 'grass', 'grass']* 2,
-    # ]
 
     time_delta = 0.0
     # Основной игровой цикл
@@ -53,10 +49,9 @@ def main():
                 pygame.quit()
                 sys.exit()
             elif event.type == pygame_gui.UI_TEXT_ENTRY_FINISHED and event.ui_element == input_box:
-                print("CALL FUNCTION:", get_function(event.text))
+                print("CALL FUNCTION:", get_function(generation_pipeline, event.text))
                 input_box.set_text("")
             manager.process_events(event)
-
 
         keys = pygame.key.get_pressed()
         player.move(keys)
