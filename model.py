@@ -33,13 +33,14 @@ def get_pipeline(model_name: str) -> Pipeline:
     tokenizer = AutoTokenizer.from_pretrained(model_name)
     if 'tools' not in tokenizer.chat_template:
         tokenizer.chat_template = RENDER_JSON_TEMPLATE + tokenizer.chat_template + TOOLS_TEMPLATE
-    model = AutoModelForCausalLM.from_pretrained(
-        model_name,
-        # low_cpu_mem_usage=True,
-        cache_dir="model_cache"
-    )
+    # model = AutoModelForCausalLM.from_pretrained(
+    #     model_name,
+    #     # low_cpu_mem_usage=True,
+    #     cache_dir="model_cache"
+    # )
     return pipeline(
-        model=model,
+        # model=model,
+        model=model_name,
         tokenizer=tokenizer,
         model_kwargs={
             "torch_dtype": torch.bfloat16,
