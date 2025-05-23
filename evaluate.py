@@ -15,9 +15,8 @@ MODELS = [
 with open("eval_dataset.json", "r", encoding="utf-8") as f:
     test_data = json.load(f)
 
-results = []
-
 for model_name in MODELS:
+    results = []
     print(f"Evaluating model: {model_name}")
     generation_pipeline = get_pipeline(model_name)
     for item in test_data:
@@ -48,5 +47,5 @@ for model_name in MODELS:
             "exact_match": exact_match
         })
 
-with open("results.json", "w", encoding="utf-8") as out:
-    json.dump(results, out, ensure_ascii=False, indent=2)
+    with open(f"{model_name.replace('/', '_')}_result.json", "w", encoding="utf-8") as out:
+        json.dump(results, out, ensure_ascii=False, indent=2)
