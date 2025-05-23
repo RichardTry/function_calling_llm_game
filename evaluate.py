@@ -1,4 +1,5 @@
 import json
+import tqdm
 from torch import bfloat16
 from transformers import pipeline
 from model import get_pipeline, get_function
@@ -15,11 +16,11 @@ MODELS = [
 with open("eval_dataset.json", "r", encoding="utf-8") as f:
     test_data = json.load(f)
 
-for model_name in MODELS:
+for model_name in tqdm(MODELS):
     results = []
     print(f"Evaluating model: {model_name}")
     generation_pipeline = get_pipeline(model_name)
-    for item in test_data:
+    for item in tqdm(test_data):
         prompt = item["input"]
         should_call = "expected_function" in item
         expected_function = item.get("expected_function")
