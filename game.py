@@ -2,6 +2,7 @@ import pygame
 import pygame_gui
 import sys
 import random
+from pathlib import Path
 
 from consts import *
 from character import Character
@@ -25,8 +26,8 @@ def main():
     pygame.display.set_caption("Клеточное поле")
     clock = pygame.time.Clock()
 
-    content = Content('tiles')
-    world = World(content.tiles, 5, 4)
+    content = Content(Path('schemas'))
+    world = World(content, 25, 20)
     player = Character(0, 0, "textures/player.png")
 
     # Создание pipeline один раз при запуске
