@@ -1,13 +1,14 @@
 import random
+import pygame
 from noise import pnoise2
 
 from tile import Tile
 
 class World:
-    def __init__(self, tiles, size_x, size_y):
+    def __init__(self, content, size_x, size_y):
         self.size_x = size_x
         self.size_y = size_y
-        self.tiles = tiles
+        self.content = content
         self.map = []
 
         self.generate_map()
@@ -33,13 +34,14 @@ class World:
                 nx = x / scale
                 ny = y / scale
                 height_value = pnoise2(nx, ny, octaves=octaves, persistence=persistence, lacunarity=lacunarity, repeatx=1024, repeaty=1024, base=seed)
-                tile = self.tiles[get_tile_by_height(height_value)]
+                tile = self.content.tiles.get(get_tile_by_height(height_value))
+                tile.object = self.content.objects.get('castle') if random.random() < 0.01 else None
                 row.append(tile)
             self.map.append(row)
 
         return self.map
 
-    def draw(self, surface):
+    def draw(self, surface: pygame.Surface):
         for y in range(self.size_y):
             for x in range(self.size_x):
                 tile: Tile = self.map[y][x]
