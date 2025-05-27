@@ -32,15 +32,6 @@ def main():
     # Создание pipeline один раз при запуске
     generation_pipeline = get_pipeline("DiTy/gemma-2-9b-it-russian-function-calling-GGUF")
 
-    # Создаем сетку тайлов (пример 10x15)
-    choices = ['grass', 'grass', 'water', 'castle']
-    probabilities = [0.5, 0.3, 0.1, 0.01]
-    grid = []
-    for y in range(HEIGHT // TILE_SIZE):
-        grid.append([])
-        for x in range(WIDTH // TILE_SIZE):
-            grid[y].append(random.choices(choices, weights=probabilities, k=1)[0])
-
     time_delta = 0.0
     # Основной игровой цикл
     while True:
